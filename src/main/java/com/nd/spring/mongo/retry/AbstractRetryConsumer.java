@@ -61,14 +61,14 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
         this(null);
     }
     
-    public AbstractRetryConsumer(RetryService<T> mongoRetryService)
+    public AbstractRetryConsumer(RetryService<T> retryService)
     {
-        this(mongoRetryService, Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).build()));
+        this(retryService, Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).build()));
     }
     
-    public AbstractRetryConsumer(RetryService<T> mongoRetryService, ExecutorService executorService)
+    public AbstractRetryConsumer(RetryService<T> retryService, ExecutorService executorService)
     {
-        this.retry = mongoRetryService;
+        this.retry = retryService;
         this.executor = executorService;
     }
 
