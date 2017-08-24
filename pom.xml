@@ -54,44 +54,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <id>javadoc</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <exec dir="${project.basedir}/target/site/apidocs" executable="cmd.exe" spawn="true">
-                                    <arg value="/c"/>
-                                    <arg value="git init"/>
-                                </exec>
-                                <exec dir="${project.basedir}/target/site/apidocs" executable="cmd.exe" spawn="true">
-                                    <arg value="/c"/>
-                                    <arg value="git add *"/>
-                                </exec>
-                                <exec dir="${project.basedir}/target/site/apidocs" executable="cmd.exe" spawn="true">
-                                    <arg value="/c"/>
-                                    <arg value="git commit -m &quot;add javadoc&quot;"/>
-                                </exec>
-                                <exec dir="${project.basedir}/target/site/apidocs" executable="cmd.exe" spawn="true">
-                                    <arg value="/c"/>
-                                    <arg value="git remote add origin git@git.sdp.nd:app-web/doc-mongo-retry.git"/>
-                                </exec>
-                                <exec dir="${project.basedir}/target/site/apidocs" executable="cmd.exe" spawn="true">
-                                    <arg value="/c"/>
-                                    <arg value="git subtree push --prefix=src/main/webapp/apidocs master"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
