@@ -42,7 +42,6 @@
                 <version>2.10.2</version>
                 <configuration>
                     <aggregate>true</aggregate>
-                    <destDir>${project.basedir}/target/site/apidocs/${project.version}</destDir>
                 </configuration>
                 <executions>
                     <execution>
