@@ -2,15 +2,15 @@
  * @copyright Copyright 1999-2017 © 99.com All rights reserved.
  * @license http://www.99.com/about
  */
-package com.nd.component.java.mongo.retry;
+package com.nd.spring.mongo.retry;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import com.nd.component.java.mongo.retry.message.RetryMessage;
-import com.nd.component.java.mongo.retry.task.RetryTaskService;
+import com.nd.spring.mongo.retry.message.RetryMessage;
+import com.nd.spring.mongo.retry.task.RetryTaskService;
 
 /**
  * @author SongDeQiang <mail.song.de.qiang@gmail.com>

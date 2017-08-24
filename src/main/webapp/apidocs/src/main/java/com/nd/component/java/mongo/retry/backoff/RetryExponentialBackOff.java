@@ -2,7 +2,7 @@
  * @copyright Copyright 1999-2017 © 99.com All rights reserved.
  * @license http://www.99.com/about
  */
-package com.nd.component.java.mongo.retry.backoff;
+package com.nd.spring.mongo.retry.backoff;
 
 import org.springframework.util.Assert;
 
@@ -142,7 +142,7 @@ public class RetryExponentialBackOff implements RetryBackOff
 
     /**
      * @return
-     * @see com.nd.component.java.mongo.retry.backoff.RetryBackOff#next()
+     * @see com.nd.spring.mongo.retry.backoff.RetryBackOff#next()
      */
     @Override
     public RetryBackOff next()
@@ -152,7 +152,7 @@ public class RetryExponentialBackOff implements RetryBackOff
 
     /**
      * @return
-     * @see com.nd.component.java.mongo.retry.backoff.RetryBackOff#nextAttempts()
+     * @see com.nd.spring.mongo.retry.backoff.RetryBackOff#nextAttempts()
      */
     @Override
     public int attempts()

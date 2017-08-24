@@ -2,7 +2,7 @@
  * @copyright Copyright 1999-2017 © 99.com All rights reserved.
  * @license http://www.99.com/about
  */
-package com.nd.component.java.mongo.retry.backoff;
+package com.nd.spring.mongo.retry.backoff;
 
 /**
  * @author SongDeQiang <mail.song.de.qiang@gmail.com>

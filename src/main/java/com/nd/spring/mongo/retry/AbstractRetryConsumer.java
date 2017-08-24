@@ -2,7 +2,7 @@
  * @copyright Copyright 1999-2017 © 99.com All rights reserved.
  * @license http://www.99.com/about
  */
-package com.nd.component.java.mongo.retry;
+package com.nd.spring.mongo.retry;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -14,8 +14,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.nd.component.java.mongo.retry.backoff.RetryExponentialBackOff;
-import com.nd.component.java.mongo.retry.message.RetryMessage;
+import com.nd.spring.mongo.retry.backoff.RetryExponentialBackOff;
+import com.nd.spring.mongo.retry.message.RetryMessage;
 
 /**
  * Exponential mongodb retry task, for example:

@@ -2,7 +2,7 @@
  * @copyright Copyright 1999-2017 © 99.com All rights reserved.
  * @license http://www.99.com/about
  */
-package com.nd.component.java.mongo.retry.task;
+package com.nd.spring.mongo.retry.task;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,8 +12,8 @@ import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import com.mongodb.BasicDBObject;
-import com.nd.component.java.mongo.retry.RetryConsumer;
-import com.nd.component.java.mongo.retry.message.RetryMessage;
+import com.nd.spring.mongo.retry.RetryConsumer;
+import com.nd.spring.mongo.retry.message.RetryMessage;
 
 /**
  * @author SongDeQiang <mail.song.de.qiang@gmail.com>
