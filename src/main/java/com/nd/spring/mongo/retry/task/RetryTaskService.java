@@ -6,6 +6,7 @@ package com.nd.spring.mongo.retry.task;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,9 @@ import org.springframework.data.mongodb.core.index.CompoundIndexDefinition;
 import org.springframework.scheduling.config.IntervalTask;
 import org.springframework.scheduling.config.ScheduledTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.util.Assert;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.nd.spring.mongo.retry.RetryConsumer;
@@ -53,8 +56,12 @@ public class RetryTaskService<T extends RetryMessage<?>>
     
     private RetryConsumer<T> consumer;
     
-    private ScheduledTaskRegistrar registrar = new ScheduledTaskRegistrar();
+    private ScheduledTaskRegistrar registrar;
     
+    /**
+     * @param mongoTemplate
+     * @param document
+     */
     public RetryTaskService(MongoTemplate mongoTemplate, Class<T> document)
     {
         this(mongoTemplate, document, DEFAULT_COLLECTION);
@@ -67,9 +74,51 @@ public class RetryTaskService<T extends RetryMessage<?>>
      */
     public RetryTaskService(MongoTemplate mongoTemplate, Class<T> document, String collection)
     {
+        this(createRegistrar(), mongoTemplate, document, DEFAULT_COLLECTION);
+    }
+    
+    /**
+     * @param registrar
+     * @param mongoTemplate
+     * @param document
+     * @param collection
+     */
+    public RetryTaskService(ScheduledTaskRegistrar registrar, MongoTemplate mongoTemplate, Class<T> document, String collection)
+    {
+        Assert.notNull(registrar);
+        Assert.notNull(mongoTemplate);
+        Assert.notNull(document);
+        Assert.notNull(collection);
+        
+        this.registrar = registrar;
         this.mongoTemplate = mongoTemplate;
         this.document = document;
         this.collection = collection;
+    }
+    
+    private static ScheduledTaskRegistrar createRegistrar()
+    {
+        ScheduledTaskRegistrar registrar = new ScheduledTaskRegistrar();
+        
+        registrar.setScheduler(Executors.newScheduledThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).build()));
+        
+        return registrar;
+    }
+
+    /**
+     * @return the registrar
+     */
+    public ScheduledTaskRegistrar getRegistrar()
+    {
+        return registrar;
+    }
+
+    /**
+     * @param registrar the registrar to set
+     */
+    public void setRegistrar(ScheduledTaskRegistrar registrar)
+    {
+        this.registrar = registrar;
     }
 
     /**
