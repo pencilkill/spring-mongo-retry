@@ -145,6 +145,7 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
     public void afterPropertiesSet() throws Exception
     {
         retry = createRetryService();
+        retry.getTaskService().setConsumer(this);
         retry.afterPropertiesSet();
     }
 }

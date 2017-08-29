@@ -106,6 +106,22 @@ public class RetryTaskService<T extends RetryMessage<?>>
     }
 
     /**
+     * @return the consumer
+     */
+    public RetryConsumer<T> getConsumer()
+    {
+        return consumer;
+    }
+
+    /**
+     * @param consumer the consumer to set
+     */
+    public void setConsumer(RetryConsumer<T> consumer)
+    {
+        this.consumer = consumer;
+    }
+
+    /**
      * @return the registrar
      */
     public ScheduledTaskRegistrar getRegistrar()
