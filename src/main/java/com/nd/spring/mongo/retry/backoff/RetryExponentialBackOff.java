@@ -49,9 +49,9 @@ public class RetryExponentialBackOff implements RetryBackOff
      */
     public RetryExponentialBackOff(long firstAttemptTime, int attempts, int maxAttempts, long interval, double multiplier)
     {
-        Assert.isTrue(attempts < 0, "Attempts must not be less than 0");
-        Assert.isTrue(attempts < maxAttempts, "Attempts must not be greater than maxAttempts");
-        Assert.isTrue(1.0 < multiplier, "Multiplier must be greater than 1.0");
+        Assert.isTrue(attempts >= 0, "Attempts must not be less than 0");
+        Assert.isTrue(maxAttempts >= attempts, "Attempts must not be greater than maxAttempts");
+        Assert.isTrue(multiplier > 1.0, "Multiplier must be greater than 1.0");
         
         this.firstAttemptTime = firstAttemptTime;
         this.attempts = attempts;
