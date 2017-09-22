@@ -99,8 +99,10 @@ public class RetryService<T extends RetryMessage<?>> implements InitializingBean
     /**
      * @param message
      */
-    public void save(T message)
+    public void add(T message)
     {
+        taskService.addCollectionTask(message.getAttempts());
+
         taskService.save(message);
     }
     
