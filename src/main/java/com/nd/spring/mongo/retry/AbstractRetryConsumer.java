@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -71,6 +72,8 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
     
     public AbstractRetryConsumer(RetryService<T> retryService, ErrorHandler<T> errorHander, ExecutorService executorService)
     {
+        Assert.notNull(executorService);
+        
         this.retry = retryService;
         this.executor = executorService;
     }
