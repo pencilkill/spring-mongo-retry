@@ -140,7 +140,7 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
             {
                 if(retry != null)
                 {
-                    retry.add(message);
+                    retry.save(message);
                 }
                 
                 continue;
@@ -165,7 +165,7 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
                         
                         if(retry != null)
                         {
-                            retry.add(message);
+                            retry.save(message);
                         }
                     }
                 }
