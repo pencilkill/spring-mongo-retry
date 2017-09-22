@@ -93,7 +93,7 @@ public class RetryService<T extends RetryMessage<?>> implements InitializingBean
      */
     public void remove(T message)
     {
-        taskService.save(message);
+        taskService.remove(message);
     }
     
     /**
@@ -101,7 +101,7 @@ public class RetryService<T extends RetryMessage<?>> implements InitializingBean
      */
     public void save(T message)
     {
-        taskService.remove(message);
+        taskService.save(message);
     }
     
     /**
