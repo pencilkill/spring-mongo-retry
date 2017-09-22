@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Persistable;
+import org.springframework.util.Assert;
 
 import com.nd.spring.mongo.retry.backoff.RetryBackOff;
 
@@ -50,8 +51,13 @@ public abstract class RetryMessage<T> implements Persistable<String>
      */
     public RetryMessage(T payload, RetryBackOff backOff)
     {
+        Assert.notNull(payload);
+        Assert.notNull(backOff);
+        
         this.payload = payload;
         this.backOff = backOff;
+        this.attempts = backOff.attempts();
+        this.nextAttemptTime = backOff.attemptTime();
     }
 
     /**
