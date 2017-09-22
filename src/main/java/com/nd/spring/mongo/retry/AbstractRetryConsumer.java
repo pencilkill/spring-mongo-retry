@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
@@ -50,11 +48,11 @@ public class SomeThingRetry extends AbstractRetryConsumer{@literal <}RetryDBObje
  */
 public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implements RetryConsumer<T>, InitializingBean
 {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractRetryConsumer.class);
-    
     private RetryService<T> retry;
 
     private ExecutorService executor;
+    
+    private ErrorHandler<T> errorHander;
     
     public AbstractRetryConsumer()
     {
@@ -63,10 +61,15 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
     
     public AbstractRetryConsumer(RetryService<T> retryService)
     {
-        this(retryService, Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).build()));
+        this(retryService, null);
     }
     
-    public AbstractRetryConsumer(RetryService<T> retryService, ExecutorService executorService)
+    public AbstractRetryConsumer(RetryService<T> retryService, ErrorHandler<T> errorHander)
+    {
+        this(retryService, errorHander, Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).build()));
+    }
+    
+    public AbstractRetryConsumer(RetryService<T> retryService, ErrorHandler<T> errorHander, ExecutorService executorService)
     {
         this.retry = retryService;
         this.executor = executorService;
@@ -104,6 +107,22 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
         this.executor = executor;
     }
 
+    /**
+     * @return the errorHander
+     */
+    public ErrorHandler<T> getErrorHander()
+    {
+        return errorHander;
+    }
+
+    /**
+     * @param errorHander the errorHander to set
+     */
+    public void setErrorHander(ErrorHandler<T> errorHander)
+    {
+        this.errorHander = errorHander;
+    }
+
     @Override
     public void handler(Collection<T> messages)
     {
@@ -114,6 +133,16 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
         
         for (final T message : messages)
         {
+            if(message.getNextAttemptTime() > System.currentTimeMillis())
+            {
+                if(retry != null)
+                {
+                    retry.save(message);
+                }
+                
+                continue;
+            }
+            
             executor.execute(new Runnable() {
                 @Override
                 public void run()
@@ -124,11 +153,17 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
                     }
                     catch (Exception e)
                     {
-                        logger.error("Mongo retry message error [Id={}]", message.getId(), e);
-                        //
+                        if(errorHander != null)
+                        {
+                            errorHander.handleError(message, e);
+                        }
+                        
                         message.next();
                         
-                        retry.save(message);
+                        if(retry != null)
+                        {
+                            retry.save(message);
+                        }
                     }
                 }
             });
@@ -145,6 +180,10 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
     public void afterPropertiesSet() throws Exception
     {
         retry = createRetryService();
-        retry.afterPropertiesSet();
+        
+        if(retry != null)
+        {
+            retry.afterPropertiesSet();
+        }
     }
 }
