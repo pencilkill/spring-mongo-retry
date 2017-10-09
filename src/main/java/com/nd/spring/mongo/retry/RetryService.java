@@ -120,7 +120,7 @@ public class RetryService<T extends RetryMessage<?>> implements InitializingBean
      */
     private void initializeTasks()
     {
-        for(int i = 0; i < maxAttempts; i++)
+        for(int i = 0; i <= maxAttempts; i++)
         {
             taskService.addCollectionTask(i);
         }
