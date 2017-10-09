@@ -104,6 +104,22 @@ public abstract class RetryMessage<T> implements Persistable<String>
     }
 
     /**
+     * @return the backOff
+     */
+    public RetryBackOff getBackOff()
+    {
+        return backOff;
+    }
+
+    /**
+     * @param backOff the backOff to set
+     */
+    public void setBackOff(RetryBackOff backOff)
+    {
+        this.backOff = backOff;
+    }
+
+    /**
      * @return the attempts
      */
     public int getAttempts()
