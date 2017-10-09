@@ -26,7 +26,7 @@ public class RetryDBObject extends RetryMessage<BasicDBObject>
      */
     public RetryDBObject()
     {
-        this(null, null);
+        //;
     }
 
     /**

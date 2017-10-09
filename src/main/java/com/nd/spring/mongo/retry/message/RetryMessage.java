@@ -38,16 +38,21 @@ public abstract class RetryMessage<T> implements Persistable<String>
     private Date updateAt;
     
     /**
+     *
+     */
+    public RetryMessage()
+    {
+        // For deser ...
+    }
+    
+    /**
      * @param payload
-     * @param method
-     * @param maxAttempts
-     * @param interval
-     * @param multiplier
+     * @param backOff
      */
     public RetryMessage(T payload, RetryBackOff backOff)
     {
-        Assert.notNull(payload);
-        Assert.notNull(backOff);
+        Assert.notNull(payload, "Payload for retry message can not be null");
+        Assert.notNull(backOff, "BackOff for retry message can not be null");
         
         this.payload = payload;
         this.backOff = backOff;
