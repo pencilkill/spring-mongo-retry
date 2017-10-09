@@ -37,11 +37,6 @@ public abstract class RetryMessage<T> implements Persistable<String>
     
     private Date updateAt;
     
-    public RetryMessage()
-    {
-        this(null, null);
-    }
-    
     /**
      * @param payload
      * @param method
