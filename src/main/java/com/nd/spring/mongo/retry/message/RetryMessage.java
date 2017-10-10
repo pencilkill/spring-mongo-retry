@@ -169,9 +169,9 @@ public abstract class RetryMessage<T> implements Persistable<String>
 
     public void next()
     {
-        RetryBackOff next = backOff.next();
+        backOff = backOff.next();
         
-        attempts = next.attempts();
-        nextAttemptTime = next.attemptTime();
+        attempts = backOff.attempts();
+        nextAttemptTime = backOff.attemptTime();
     }
 }
