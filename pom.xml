@@ -121,6 +121,7 @@
             <groupId>com.nd.gaea</groupId>
             <artifactId>nd-rest</artifactId>
             <version>${nd.rest.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
