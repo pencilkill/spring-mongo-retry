@@ -4,6 +4,8 @@
  */
 package com.nd.spring.mongo.retry;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,7 @@ public class RetryConsumerTest extends AppTest
     @Test
     public void test()
     {
-        consumerService.handler(new RetryDBObject(new BasicDBObject("test", true), new RetryExponentialBackOff(System.currentTimeMillis(), 10, 15000, 2.0)));
+        consumerService.handler(Arrays.asList(new RetryDBObject(new BasicDBObject("test", true), new RetryExponentialBackOff(System.currentTimeMillis(), 10, 15000, 2.0))));
         
         logger.debug("keep");
     }
