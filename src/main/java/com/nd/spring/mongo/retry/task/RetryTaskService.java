@@ -38,7 +38,7 @@ public class RetryTaskService<T extends RetryMessage<?>>
     
     private static final DBObject QUERY_INDEX = new BasicDBObject("attempts", 1).append("nextAttemptTime", 1);
     
-    private static final String QUERY_EXPRESSION = "{'attempts':#root.attempts,'nextAttemptTime':{'$lte':T(java.lang.System).currentTimeMillis()}}";
+    private static final String QUERY_EXPRESSION = "{'attempts':#root.attempt,'nextAttemptTime':{'$lte':T(java.lang.System).currentTimeMillis()}}";
     
     private static final ConcurrentMap<Integer, ScheduledTask> task = new ConcurrentHashMap<Integer, ScheduledTask>();
 
