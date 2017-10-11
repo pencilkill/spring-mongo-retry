@@ -14,6 +14,7 @@
         <project.version.postfix>-SNAPSHOT</project.version.postfix>
         <spring.version>4.3.6.RELEASE</spring.version>
         <spring.data.mongodb.version>1.10.4.RELEASE</spring.data.mongodb.version>
+        <nd.rest.version>0.16.5</nd.rest.version>
         <mockito.version>1.10.19</mockito.version>
         <java.version>1.7</java.version>
     </properties>
@@ -115,6 +116,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>23.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nd.gaea</groupId>
+            <artifactId>nd-rest</artifactId>
+            <version>${nd.rest.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
