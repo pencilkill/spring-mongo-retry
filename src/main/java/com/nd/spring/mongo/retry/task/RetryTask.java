@@ -30,6 +30,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     
     private String collection;
 
+    private int attempt;
+
     private RetryConsumer<T> consumer;
     
     private String criteria;
@@ -44,11 +46,12 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
      * @param criteria SPEL expression BasicDBObject string value
      * @param pageable
      */
-    public RetryTask(MongoTemplate mongoTemplate, Class<T> document, String collection, RetryConsumer<T> consumer, String criteria, Pageable pageable)
+    public RetryTask(MongoTemplate mongoTemplate, Class<T> document, String collection, int attempt, RetryConsumer<T> consumer, String criteria, Pageable pageable)
     {
         this.mongoTemplate = mongoTemplate;
         this.document = document;
         this.collection = collection;
+        this.attempt = attempt;
         this.consumer = consumer;
         this.criteria = criteria;
         this.pageable = pageable;
@@ -60,6 +63,118 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     @Override
     public void run()
     {
-        consumer.handler(mongoTemplate.findAllAndRemove(new BasicQuery(parser.parseExpression(criteria).getValue(BasicDBObject.class)).with(pageable), document, collection));
+        consumer.handler(mongoTemplate.find(new BasicQuery(parser.parseExpression(criteria).getValue(this, BasicDBObject.class)).with(pageable), document, collection));
+    }
+
+    /**
+     * @return the mongoTemplate
+     */
+    public MongoTemplate getMongoTemplate()
+    {
+        return mongoTemplate;
+    }
+
+    /**
+     * @param mongoTemplate the mongoTemplate to set
+     */
+    public void setMongoTemplate(MongoTemplate mongoTemplate)
+    {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * @return the document
+     */
+    public Class<T> getDocument()
+    {
+        return document;
+    }
+
+    /**
+     * @param document the document to set
+     */
+    public void setDocument(Class<T> document)
+    {
+        this.document = document;
+    }
+
+    /**
+     * @return the collection
+     */
+    public String getCollection()
+    {
+        return collection;
+    }
+
+    /**
+     * @param collection the collection to set
+     */
+    public void setCollection(String collection)
+    {
+        this.collection = collection;
+    }
+
+    /**
+     * @return the attempt
+     */
+    public int getAttempt()
+    {
+        return attempt;
+    }
+
+    /**
+     * @param attempt the attempt to set
+     */
+    public void setAttempt(int attempt)
+    {
+        this.attempt = attempt;
+    }
+
+    /**
+     * @return the consumer
+     */
+    public RetryConsumer<T> getConsumer()
+    {
+        return consumer;
+    }
+
+    /**
+     * @param consumer the consumer to set
+     */
+    public void setConsumer(RetryConsumer<T> consumer)
+    {
+        this.consumer = consumer;
+    }
+
+    /**
+     * @return the criteria
+     */
+    public String getCriteria()
+    {
+        return criteria;
+    }
+
+    /**
+     * @param criteria the criteria to set
+     */
+    public void setCriteria(String criteria)
+    {
+        this.criteria = criteria;
+    }
+
+    /**
+     * @return the pageable
+     */
+    public Pageable getPageable()
+    {
+        return pageable;
+    }
+
+    /**
+     * @param pageable the pageable to set
+     */
+    public void setPageable(Pageable pageable)
+    {
+        this.pageable = pageable;
     }
 }

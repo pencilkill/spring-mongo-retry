@@ -111,18 +111,12 @@ public class RetryService<T extends RetryMessage<?>> implements InitializingBean
     {
         if(initialized.compareAndSet(false, true))
         {
-            initializeTasks();
-        }
-    }
-
-    /**
-     * Resume persist task
-     */
-    private void initializeTasks()
-    {
-        for(int i = 0; i <= maxAttempts; i++)
-        {
-            taskService.addCollectionTask(i);
+            taskService.createCollection();
+            
+            for(int i = 1; i <= maxAttempts; i++)
+            {
+                taskService.addCollectionTask(i);
+            }
         }
     }
 

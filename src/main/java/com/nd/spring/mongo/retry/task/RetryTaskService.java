@@ -36,9 +36,9 @@ public class RetryTaskService<T extends RetryMessage<?>>
 
     private static final Sort QUERY_SORT = new Sort(Direction.ASC, "update_at");
     
-    private static final DBObject QUERY_INDEX = new BasicDBObject("nextAttemptTime", 1);
+    private static final DBObject QUERY_INDEX = new BasicDBObject("attempts", 1).append("nextAttemptTime", 1);
     
-    private static final String QUERY_EXPRESSION = "{'nextAttemptTime':{'$gt':0,'$lte':T(java.lang.System).currentTimeMillis()}}";
+    private static final String QUERY_EXPRESSION = "{'attempts':#root.attempts,'nextAttemptTime':{'$lte':T(java.lang.System).currentTimeMillis()}}";
     
     private static final ConcurrentMap<Integer, ScheduledTask> task = new ConcurrentHashMap<Integer, ScheduledTask>();
 
@@ -148,15 +148,11 @@ public class RetryTaskService<T extends RetryMessage<?>>
     /**
      * @param index
      */
-    public void addCollectionTask(int index)
+    public void addCollectionTask(int attempt)
     {
-        if(task.containsKey(index) == false)
+        if(task.containsKey(attempt) == false)
         {
-            String collection = collectionName(index);
-            
-            addCollection(collection);
-            
-            task.put(index, registrar.scheduleFixedRateTask(new IntervalTask(createCollectionTask(collection), fixedRate, initialDelay)));
+            task.put(attempt, registrar.scheduleFixedRateTask(new IntervalTask(createCollectionTask(collection, attempt), fixedRate, initialDelay)));
         }
     }
     
@@ -164,35 +160,26 @@ public class RetryTaskService<T extends RetryMessage<?>>
      * @param index
      * @return
      */
-    public ScheduledTask getCollectionTask(int index)
+    public ScheduledTask getCollectionTask(int attempt)
     {
-        return task.get(index);
+        return task.get(attempt);
     }
     
     /**
      * @param collection
      * @return
      */
-    private Runnable createCollectionTask(String collection)
+    private Runnable createCollectionTask(String collection, int attempt)
     {
         Pageable pageable = new PageRequest(0, queryLimit, QUERY_SORT);
         
-        return new RetryTask<T>(mongoTemplate, document, collection, consumer, QUERY_EXPRESSION, pageable);
-    }
-
-    /**
-     * @param index
-     * @return
-     */
-    private String collectionName(int index)
-    {
-        return String.format("%s_%s", collection, index);
+        return new RetryTask<T>(mongoTemplate, document, collection, attempt, consumer, QUERY_EXPRESSION, pageable);
     }
 
     /**
      * @param collection
      */
-    private void addCollection(String collection)
+    public void createCollection()
     {
         if(mongoTemplate.collectionExists(collection))
         {
@@ -219,7 +206,7 @@ public class RetryTaskService<T extends RetryMessage<?>>
      */
     public void save(T message)
     {
-        mongoTemplate.save(message, collectionName(message.getAttempts()));
+        mongoTemplate.save(message, collection);
         
         addCollectionTask(message);
     }
@@ -229,6 +216,6 @@ public class RetryTaskService<T extends RetryMessage<?>>
      */
     public void remove(T message)
     {
-        mongoTemplate.remove(message, collectionName(message.getAttempts()));
+        mongoTemplate.remove(message, collection);
     }
 }
