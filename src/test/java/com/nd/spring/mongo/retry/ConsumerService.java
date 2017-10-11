@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Service;
 
 import com.nd.spring.mongo.retry.message.RetryDBObject;
 import com.nd.spring.mongo.retry.task.RetryTaskService;
@@ -17,7 +16,6 @@ import com.nd.spring.mongo.retry.task.RetryTaskService;
  * @author SongDeQiang <mail.song.de.qiang@gmail.com>
  *
  */
-@Service
 public class ConsumerService extends AbstractRetryConsumer<RetryDBObject>
 {
     private static final Logger logger = LoggerFactory.getLogger(ConsumerService.class);
@@ -32,7 +30,9 @@ public class ConsumerService extends AbstractRetryConsumer<RetryDBObject>
     @Override
     public void handler(RetryDBObject message)
     {
-        logger.debug(message.getPayload().toString());
+        logger.debug("Message [id={},attempts={}]", message.getId(), message.getAttempts());
+        
+        throw new RuntimeException("test ...");
     }
 
     /**

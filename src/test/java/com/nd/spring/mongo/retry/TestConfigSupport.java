@@ -7,7 +7,6 @@ package com.nd.spring.mongo.retry;
 import java.net.UnknownHostException;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
@@ -20,7 +19,6 @@ import com.mongodb.MongoClientURI;
  *
  */
 @Configuration
-@ComponentScan("com.nd.spring.mongo.retry")
 public class TestConfigSupport
 {
     public @Bean MongoTemplate mongoTemplate() throws UnknownHostException
@@ -28,5 +26,8 @@ public class TestConfigSupport
         return new MongoTemplate(new SimpleMongoDbFactory(new MongoClient(new MongoClientURI("mongodb://dev_mdb_im_friend:P9bPXBrfQuGN@172.24.133.23:34001,172.24.133.25:34001,172.24.133.24:34001/dev_mdb_im_friend?autoConnectRetry=true")), "dev_mdb_im_friend"));
     }
     
-    
+    public @Bean ConsumerService consumerService()
+    {
+        return new ConsumerService();
+    }
 }

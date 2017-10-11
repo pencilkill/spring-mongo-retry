@@ -154,7 +154,10 @@ public abstract class AbstractRetryConsumer<T extends RetryMessage<?>> implement
                     {
                         handler(message);
                         
-                        retry.remove(message);
+                        if(message.getId() != null)
+                        {
+                            retry.remove(message);
+                        }
                     }
                     catch (Exception e)
                     {
