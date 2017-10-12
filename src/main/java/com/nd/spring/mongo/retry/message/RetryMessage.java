@@ -6,7 +6,6 @@ package com.nd.spring.mongo.retry.message;
 
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Persistable;
 import org.springframework.util.Assert;
 
@@ -24,12 +23,13 @@ public abstract class RetryMessage<T> implements Persistable<String>
      */
     private static final long serialVersionUID = 1L;
     
-    @Id
     private String id;
     
     private T payload;
     
     private RetryBackOff backOff;
+    
+    private boolean process;
     
     private int attempts;
     
@@ -56,6 +56,7 @@ public abstract class RetryMessage<T> implements Persistable<String>
         
         this.payload = payload;
         this.backOff = backOff;
+        this.process = false;
         this.attempts = backOff.attempts();
         this.nextAttemptTime = backOff.attemptTime();
         this.updateAt = new Date();
@@ -121,6 +122,22 @@ public abstract class RetryMessage<T> implements Persistable<String>
     }
 
     /**
+     * @return the process
+     */
+    public boolean isProcess()
+    {
+        return process;
+    }
+
+    /**
+     * @param process the process to set
+     */
+    public void setProcess(boolean process)
+    {
+        this.process = process;
+    }
+
+    /**
      * @return the attempts
      */
     public int getAttempts()
@@ -172,6 +189,7 @@ public abstract class RetryMessage<T> implements Persistable<String>
     {
         backOff = backOff.next();
         
+        process = false;
         attempts = backOff.attempts();
         nextAttemptTime = backOff.attemptTime();
         updateAt = new Date();
