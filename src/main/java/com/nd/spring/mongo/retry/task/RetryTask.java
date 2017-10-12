@@ -4,9 +4,13 @@
  */
 package com.nd.spring.mongo.retry.task;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -22,20 +26,20 @@ import com.nd.spring.mongo.retry.message.RetryMessage;
  */
 public class RetryTask<T extends RetryMessage<?>> implements Runnable
 {
-    private static final ExpressionParser parser = new SpelExpressionParser(new SpelParserConfiguration(true,true));
-    
+    private static final ExpressionParser parser = new SpelExpressionParser(new SpelParserConfiguration(true, true));
+
     private MongoTemplate mongoTemplate;
 
     private Class<T> document;
-    
+
     private String collection;
 
     private int attempt;
 
     private RetryConsumer<T> consumer;
-    
+
     private String criteria;
-    
+
     private Pageable pageable;
 
     /**
@@ -43,7 +47,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
      * @param document
      * @param collection
      * @param consumer
-     * @param criteria SPEL expression BasicDBObject string value
+     * @param criteria
+     *            SPEL expression BasicDBObject string value
      * @param pageable
      */
     public RetryTask(MongoTemplate mongoTemplate, Class<T> document, String collection, int attempt, RetryConsumer<T> consumer, String criteria, Pageable pageable)
@@ -63,7 +68,17 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     @Override
     public void run()
     {
-        consumer.handler(mongoTemplate.find(new BasicQuery(parser.parseExpression(criteria).getValue(this, BasicDBObject.class)).with(pageable), document, collection));
+        Query query = new BasicQuery(parser.parseExpression(criteria).getValue(this, BasicDBObject.class)).with(pageable);
+
+        List<T> messages = mongoTemplate.find(new BasicQuery(parser.parseExpression(criteria).getValue(this, BasicDBObject.class)).with(pageable), document, collection);
+
+        if (!messages.isEmpty())
+        {
+            mongoTemplate.updateMulti(query, Update.update("process", true).currentDate("update_at"), collection);
+
+            consumer.handler(messages);
+        }
+
     }
 
     /**
@@ -75,7 +90,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     }
 
     /**
-     * @param mongoTemplate the mongoTemplate to set
+     * @param mongoTemplate
+     *            the mongoTemplate to set
      */
     public void setMongoTemplate(MongoTemplate mongoTemplate)
     {
@@ -91,7 +107,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     }
 
     /**
-     * @param document the document to set
+     * @param document
+     *            the document to set
      */
     public void setDocument(Class<T> document)
     {
@@ -107,7 +124,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     }
 
     /**
-     * @param collection the collection to set
+     * @param collection
+     *            the collection to set
      */
     public void setCollection(String collection)
     {
@@ -123,7 +141,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     }
 
     /**
-     * @param attempt the attempt to set
+     * @param attempt
+     *            the attempt to set
      */
     public void setAttempt(int attempt)
     {
@@ -139,7 +158,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     }
 
     /**
-     * @param consumer the consumer to set
+     * @param consumer
+     *            the consumer to set
      */
     public void setConsumer(RetryConsumer<T> consumer)
     {
@@ -155,7 +175,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     }
 
     /**
-     * @param criteria the criteria to set
+     * @param criteria
+     *            the criteria to set
      */
     public void setCriteria(String criteria)
     {
@@ -171,7 +192,8 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     }
 
     /**
-     * @param pageable the pageable to set
+     * @param pageable
+     *            the pageable to set
      */
     public void setPageable(Pageable pageable)
     {

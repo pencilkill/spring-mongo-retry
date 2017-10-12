@@ -48,7 +48,7 @@ public class RetryTaskService<T extends RetryMessage<?>>
 
     private long initialDelay = 60000;
 
-    private int queryLimit = 100;
+    private int queryLimit = 1000;
 
     private MongoTemplate mongoTemplate;
 
