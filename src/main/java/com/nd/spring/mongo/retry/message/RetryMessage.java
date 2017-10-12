@@ -59,6 +59,7 @@ public abstract class RetryMessage<T> implements Persistable<String>
         this.process = false;
         this.attempts = backOff.attempts();
         this.nextAttemptTime = backOff.attemptTime();
+        this.updateAt = new Date();
     }
 
     /**
@@ -191,5 +192,6 @@ public abstract class RetryMessage<T> implements Persistable<String>
         process = false;
         attempts = backOff.attempts();
         nextAttemptTime = backOff.attemptTime();
+        updateAt = new Date();
     }
 }
