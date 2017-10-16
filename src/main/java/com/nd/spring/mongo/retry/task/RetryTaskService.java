@@ -40,7 +40,7 @@ public class RetryTaskService<T extends RetryMessage<?>>
     
     private static final String QUERY_EXPRESSION = "{'attempts':#root.attempt,'process':false,'nextAttemptTime':{'$lte':T(java.lang.System).currentTimeMillis()}}";
     
-    private static final ConcurrentMap<Integer, ScheduledTask> task = new ConcurrentHashMap<Integer, ScheduledTask>();
+    private final ConcurrentMap<Integer, ScheduledTask> task = new ConcurrentHashMap<Integer, ScheduledTask>();
 
     private String collection = DEFAULT_COLLECTION;
 
