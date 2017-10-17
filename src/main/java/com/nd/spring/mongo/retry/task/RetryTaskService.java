@@ -46,7 +46,7 @@ public class RetryTaskService<T extends RetryMessage<?>>
 
     private long fixedRate = 15000;
 
-    private long initialDelay = 60000;
+    private long initialDelay = 15000;
 
     private int queryLimit = 1000;
 
