@@ -17,6 +17,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.WriteResult;
 import com.nd.spring.mongo.retry.RetryConsumer;
 import com.nd.spring.mongo.retry.message.RetryMessage;
 
@@ -78,21 +79,23 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
         queryObject.removeField("uuid");
         
         // External lock message
-        mongoTemplate.updateMulti(new BasicQuery(queryObject).with(pageable), new Update().set("uuid", uuid).currentDate("update_at"), collection);
+        WriteResult writeResult = mongoTemplate.updateMulti(new BasicQuery(queryObject).with(pageable), new Update().set("uuid", uuid).currentDate("update_at"), collection);
         
-        queryObject.put("uuid", uuid);
-        
-        // Query external locked message
-        List<T> messages = mongoTemplate.find(new BasicQuery(queryObject), document, collection);
-
-        if (!messages.isEmpty())
+        if(writeResult.getN() > 0)
         {
-            // Internal lock message
-            mongoTemplate.updateMulti(new BasicQuery(queryObject), Update.update("process", true).currentDate("update_at"), collection);
+            queryObject.put("uuid", uuid);
             
-            consumer.handler(messages);
-        }
+            // Query external locked message
+            List<T> messages = mongoTemplate.find(new BasicQuery(queryObject), document, collection);
 
+            if (!messages.isEmpty())
+            {
+                // Internal lock message
+                mongoTemplate.updateMulti(new BasicQuery(queryObject), Update.update("process", true).currentDate("update_at"), collection);
+                
+                consumer.handler(messages);
+            }
+        }
     }
 
     /**
