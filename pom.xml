@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.nd.component.java</groupId>
     <artifactId>spring-mongo-retry</artifactId>
-    <version>0.2.5${project.version.postfix}</version>
+    <version>0.2.6${project.version.postfix}</version>
 
     <name>spring-mongo-retry</name>
     <url>http://maven.apache.org</url>
@@ -98,6 +98,9 @@
                 <env>product</env>
                 <project.version.postfix>.RELEASE</project.version.postfix>
             </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
     </profiles>
     

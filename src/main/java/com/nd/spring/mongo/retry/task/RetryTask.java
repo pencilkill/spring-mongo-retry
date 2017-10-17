@@ -30,10 +30,6 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
 {
     private static final ExpressionParser parser = new SpelExpressionParser(new SpelParserConfiguration(true, true));
     
-    // External lock
-    private final String uuid = UUID.randomUUID().toString();
-
-    // Internal lock
     private MongoTemplate mongoTemplate;
 
     private Class<T> document;
@@ -47,6 +43,12 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     private String criteria;
 
     private Pageable pageable;
+ 
+    // External lock
+    private final String uuid = UUID.randomUUID().toString();
+
+    // Internal lock
+    private final Boolean process = false;
 
     /**
      * @param mongoTemplate
@@ -215,5 +217,21 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     public void setPageable(Pageable pageable)
     {
         this.pageable = pageable;
+    }
+
+    /**
+     * @return the uuid
+     */
+    public String getUuid()
+    {
+        return uuid;
+    }
+
+    /**
+     * @return the process
+     */
+    public boolean isProcess()
+    {
+        return process;
     }
 }
