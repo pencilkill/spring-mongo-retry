@@ -5,17 +5,18 @@
 package com.nd.spring.mongo.retry.task;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.nd.spring.mongo.retry.RetryConsumer;
 import com.nd.spring.mongo.retry.message.RetryMessage;
 
@@ -27,7 +28,11 @@ import com.nd.spring.mongo.retry.message.RetryMessage;
 public class RetryTask<T extends RetryMessage<?>> implements Runnable
 {
     private static final ExpressionParser parser = new SpelExpressionParser(new SpelParserConfiguration(true, true));
+    
+    // External lock
+    private final String uuid = UUID.randomUUID().toString();
 
+    // Internal lock
     private MongoTemplate mongoTemplate;
 
     private Class<T> document;
@@ -68,14 +73,23 @@ public class RetryTask<T extends RetryMessage<?>> implements Runnable
     @Override
     public void run()
     {
-        Query query = new BasicQuery(parser.parseExpression(criteria).getValue(this, BasicDBObject.class)).with(pageable);
-
-        List<T> messages = mongoTemplate.find(new BasicQuery(parser.parseExpression(criteria).getValue(this, BasicDBObject.class)).with(pageable), document, collection);
+        DBObject queryObject = parser.parseExpression(criteria).getValue(this, BasicDBObject.class);
+        
+        queryObject.removeField("uuid");
+        
+        // External lock message
+        mongoTemplate.updateMulti(new BasicQuery(queryObject).with(pageable), new Update().set("uuid", uuid).currentDate("update_at"), collection);
+        
+        queryObject.put("uuid", uuid);
+        
+        // Query external locked message
+        List<T> messages = mongoTemplate.find(new BasicQuery(queryObject), document, collection);
 
         if (!messages.isEmpty())
         {
-            mongoTemplate.updateMulti(query, Update.update("process", true).currentDate("update_at"), collection);
-
+            // Internal lock message
+            mongoTemplate.updateMulti(new BasicQuery(queryObject), Update.update("process", true).currentDate("update_at"), collection);
+            
             consumer.handler(messages);
         }
 
