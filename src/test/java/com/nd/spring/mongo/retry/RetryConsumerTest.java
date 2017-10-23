@@ -27,9 +27,11 @@ public class RetryConsumerTest extends AppTest
     private ConsumerService consumerService;
 
     @Test
-    public void test()
+    public void test() throws InterruptedException
     {
-        consumerService.handler(Arrays.asList(new RetryDBObject(new BasicDBObject("test", true), new RetryExponentialBackOff(System.currentTimeMillis(), 10, 15000, 2.0))));
+        consumerService.handler(Arrays.asList(new RetryDBObject(new BasicDBObject("test", true), new RetryExponentialBackOff(System.currentTimeMillis(), 10, 5000, 2.0))));
+        
+        Thread.sleep(60 * 1000);
         
         logger.debug("keep");
     }

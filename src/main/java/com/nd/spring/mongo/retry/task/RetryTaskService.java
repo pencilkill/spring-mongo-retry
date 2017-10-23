@@ -138,6 +138,102 @@ public class RetryTaskService<T extends RetryMessage<?>>
     }
 
     /**
+     * @return the collection
+     */
+    public String getCollection()
+    {
+        return collection;
+    }
+
+    /**
+     * @param collection the collection to set
+     */
+    public void setCollection(String collection)
+    {
+        this.collection = collection;
+    }
+
+    /**
+     * @return the fixedRate
+     */
+    public long getFixedRate()
+    {
+        return fixedRate;
+    }
+
+    /**
+     * @param fixedRate the fixedRate to set
+     */
+    public void setFixedRate(long fixedRate)
+    {
+        this.fixedRate = fixedRate;
+    }
+
+    /**
+     * @return the initialDelay
+     */
+    public long getInitialDelay()
+    {
+        return initialDelay;
+    }
+
+    /**
+     * @param initialDelay the initialDelay to set
+     */
+    public void setInitialDelay(long initialDelay)
+    {
+        this.initialDelay = initialDelay;
+    }
+
+    /**
+     * @return the queryLimit
+     */
+    public int getQueryLimit()
+    {
+        return queryLimit;
+    }
+
+    /**
+     * @param queryLimit the queryLimit to set
+     */
+    public void setQueryLimit(int queryLimit)
+    {
+        this.queryLimit = queryLimit;
+    }
+
+    /**
+     * @return the mongoTemplate
+     */
+    public MongoTemplate getMongoTemplate()
+    {
+        return mongoTemplate;
+    }
+
+    /**
+     * @param mongoTemplate the mongoTemplate to set
+     */
+    public void setMongoTemplate(MongoTemplate mongoTemplate)
+    {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * @return the document
+     */
+    public Class<T> getDocument()
+    {
+        return document;
+    }
+
+    /**
+     * @param document the document to set
+     */
+    public void setDocument(Class<T> document)
+    {
+        this.document = document;
+    }
+
+    /**
      * @param message
      */
     private void addCollectionTask(T message)

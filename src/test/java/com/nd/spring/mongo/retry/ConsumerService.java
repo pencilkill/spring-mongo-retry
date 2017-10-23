@@ -45,6 +45,8 @@ public class ConsumerService extends AbstractRetryConsumer<RetryDBObject>
         RetryTaskService<RetryDBObject> retryTaskService = new RetryTaskService<RetryDBObject>(mongoTemplate, RetryDBObject.class);
         
         retryTaskService.setConsumer(this);
+        retryTaskService.setFixedRate(5000);
+        retryTaskService.setInitialDelay(3000);
         
         return new RetryService<RetryDBObject>(retryTaskService);
     }
